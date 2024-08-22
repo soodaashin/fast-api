@@ -5,6 +5,6 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "welcome to fast new api"}
+    return {"message": "welcome to fast new api aashin"}
 
 
