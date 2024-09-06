@@ -18,17 +18,21 @@ class post(BaseModel):
     rating: Optional[int] = None
 
 while True:
+    
     try:
-        conn = psycopg2.connect(host= 'localhost', database='FastAPI', user="postgres", password="sood",  cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(host='localhost', database='FastAPI', user ='postgres', password='sood', cursor_factory=RealDictCursor)
         cursor = conn.cursor()
-        print("database connection was sucessfull !")
+        print("Database connection sucessfull")
         
         break
         
-    except Exception as error:
+    except  Exception as error:
         print("connection failed")
+        
         print("Error", error)
+        
         time.sleep(3)
+        
         
  
 my_posts = [{"title" : "title of post", "content": "content of post" , "id": 1}, {"title" : "second post", "content": "new second post", "id":2}] 
@@ -48,12 +52,15 @@ def find_post(id):
 
 
 @app.get("/")
-async def root():
-    return {"message": "welcome to fast new fast api"}
+async def root():      
+   return {"message": "welcome to fast new fast api"}
 
 
 @app.get("/posts")
 def get_posts():
+    posts_data =  cursor.execute("""Select * from new""")
+    cursor.fetchall()
+    print(posts_data)
     return{"data" : my_posts}
 
 
