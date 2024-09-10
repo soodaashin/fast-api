@@ -58,10 +58,10 @@ async def root():
 
 @app.get("/posts")
 def get_posts():
-    Posts =  cursor.execute("""Select * from Posts""")
-    cursor.fetchall()
-    print(Posts)
-    return{"data" : my_posts}
+    cursor.execute("""Select * from posts""")
+    posts = cursor.fetchall()
+    print(posts)
+    return{"data" : posts}
 
 
 
