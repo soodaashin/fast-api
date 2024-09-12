@@ -53,7 +53,7 @@ def find_post(id):
 
 @app.get("/")
 async def root():      
-   return {"message": "welcome to fast new fast api"}
+   return {"message": "welcome to fast api"}
 
 
 @app.get("/posts")
