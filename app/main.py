@@ -14,7 +14,7 @@ app = FastAPI()
 class post(BaseModel):
     title : str
     content : str
-    published : bool = True
+    published: Optional[bool] = True
     rating: Optional[int] = None
 
 while True:
@@ -53,27 +53,25 @@ def find_post(id):
 
 @app.get("/")
 async def root():      
-   return {"message": "welcome to fast api"}
+   return {"message": "welcome"}
 
 
 @app.get("/posts")
 def get_posts():
     cursor.execute("""Select * from posts""")
     posts = cursor.fetchall()
-    print(posts)
+    #print(posts)
     return{"data" : posts}
 
-
-
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def createposts(post : post):
+def create_post(post: post):
     
-    post_dict = post.dict()
-    post_dict["id"] = randrange(0 , 100000000)
+    cursor.execute("INSERT INTO posts (Title, Content, Published) VALUES (%s, %s, %s) RETURNING *",(post.title, post.content, post.published))
     
-    my_posts.append(post_dict)
-    return {"data : " :  post_dict}
-
+    created_post = cursor.fetchone()
+    
+    conn.commit()
+    return {"data": created_post}
 
 @app.get("/posts/{id}")
 def get_post(id : int, response: Response):
