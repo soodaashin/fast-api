@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from random import randrange
 import psycopg2
@@ -12,8 +12,9 @@ app = FastAPI()
 
 
 class post(BaseModel):
-    title : str
-    content : str
+    id: int
+    title: str
+    content: str
     published: Optional[bool] = True
     rating: Optional[int] = None
 
@@ -66,30 +67,24 @@ def get_posts():
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_post(post: post):
     
-    cursor.execute("INSERT INTO posts (Title, Content, Published) VALUES (%s, %s, %s) RETURNING *",(post.title, post.content, post.published))
+    cursor.execute("""INSERT INTO posts (id, title, content, published) VALUES (%s, %s, %s, %s) RETURNING *""",(post.id, post.title, post.content, post.published))
     
     created_post = cursor.fetchone()
     
     conn.commit()
+    #print(create_post)
     return {"data": created_post}
 
 @app.get("/posts/{id}")
-def get_post(id : int, response: Response):
-    # print(id)
+def get_post(id : int):
     
-    post = findpost(id)
+    cursor.execute("""Select * from posts where id = %s """, (str(id)))
     
-    if not post:
-        
-        return{"post detail" : post}
-        
+    posts = cursor.fetchone()
+    
+    if not posts:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id {id} does not exists")
-        
-    #     response.status_code = status.HTTP_404_NOT_FOUND
-    
-    # return{f"this post with id {id} was not found in database"}
-    # return {"post_detail" : f"here is post{id}"}
-    
+    return{"data" : posts}
  
  
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
