@@ -5,12 +5,21 @@ from sqlalchemy.orm import sessionmaker
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sood@localhost/FastAPI"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        
+        
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-
-# engine = create_engine(
-#     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-# )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+

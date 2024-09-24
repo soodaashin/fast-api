@@ -6,20 +6,13 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from . import models
 from sqlalchemy.orm import Session
-from .database import engine, SessionLocal
+from .database import engine, SessionLocal, get_db
 
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 class post(BaseModel):
@@ -141,8 +134,7 @@ def updatepost(id:int, post:post):
 
 
 
-
-@app.get("/sqlalchemy")
-def test_posts(db: Session = Depends(get_db)):
-    return{"sucess"}
- 
+@app.get('/sqlalchemy')
+def testposts(db: Session = Depends(get_db)):
+    
+    return{"data" : "sucess"}
