@@ -1,10 +1,10 @@
 from  .database import Base
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.sql.expression import null, text
-from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.sqltypes import TIMESTAMP   
 
-class Post(Base):
-    __tablename__ = "Posts"
+class post(Base):
+    __tablename__ = "posts"
     
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)

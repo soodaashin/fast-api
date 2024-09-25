@@ -10,6 +10,7 @@ from . import models
 from sqlalchemy.orm import Session
 from .database import engine, SessionLocal, get_db
 
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -20,7 +21,7 @@ class post(BaseModel):
     title: str
     content: str
     published: Optional[bool] = True
-    rating: Optional[int] = None
+    #rating: Optional[int] = None
 
 while True:
     
@@ -62,22 +63,38 @@ async def root():
 
 
 @app.get("/posts")
-def get_posts():
-    cursor.execute("""Select * from posts""")
-    posts = cursor.fetchall()
+def get_posts(db: Session = Depends(get_db)):
+    # cursor.execute("""Select * from Post""")
+    # posts = cursor.fetchall()
     #print(posts)
+    
+    posts = db.query(models.post).all() 
+    
     return{"data" : posts}
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: post):
+def create_post(post: post, db: Session = Depends(get_db)):
     
-    cursor.execute("""INSERT INTO posts (id, title, content, published) VALUES (%s, %s, %s, %s) RETURNING *""",(post.id, post.title, post.content, post.published))
+    # cursor.execute("""INSERT INTO posts (id, title, content, published) VALUES (%s, %s, %s, %s) RETURNING *""",(post.id, post.title, post.content, post.published))
     
-    created_post = cursor.fetchone()
+    # created_post = cursor.fetchone()
     
-    conn.commit()
-    #print(create_post)
-    return {"data": created_post}
+    # conn.commit()
+    # #print(create_post)
+    # return {"data": created_post}
+    
+    # print(post.dict())
+    
+    new_post =  models.post(**post.dict())
+    
+    db.add(new_post) 
+    db.commit()
+    
+    db.refresh(new_post)
+    
+    return{"data" : new_post}
+    
+    
 
 @app.get("/posts/{id}")
 def get_post(id : int):
@@ -137,4 +154,6 @@ def updatepost(id:int, post:post):
 @app.get('/sqlalchemy')
 def testposts(db: Session = Depends(get_db)):
     
-    return{"data" : "sucess"}
+     
+    posts = db.query(models.Post).all()
+    return{"data" : posts}
