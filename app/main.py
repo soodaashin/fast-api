@@ -6,7 +6,7 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-from . import models
+from . import models, schemas
 from sqlalchemy.orm import Session
 from .database import engine, SessionLocal, get_db
 
@@ -16,12 +16,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
-class post(BaseModel):
-    id: int
-    title: str
-    content: str
-    published: Optional[bool] = True
-    #rating: Optional[int] = None
+
 
 while True:
     
@@ -70,29 +65,21 @@ def get_posts(db: Session = Depends(get_db)):
     
     posts = db.query(models.post).all() 
     
-    return{"data" : posts}
+    return posts
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: post, db: Session = Depends(get_db)):
-    
-    # cursor.execute("""INSERT INTO posts (id, title, content, published) VALUES (%s, %s, %s, %s) RETURNING *""",(post.id, post.title, post.content, post.published))
-    
-    # created_post = cursor.fetchone()
-    
-    # conn.commit()
-    # #print(create_post)
-    # return {"data": created_post}
-    
-    # print(post.dict())
-    
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
+        
     new_post =  models.post(**post.dict())
+    
     
     db.add(new_post) 
     db.commit()
     
     db.refresh(new_post)
     
-    return{"data" : new_post}
+    return new_post
+
     
     
 
@@ -147,7 +134,7 @@ def deleteposts(id:int, db: Session = Depends(get_db)):
     
     
 @app.put("/posts/{id}")
-def updatepost(id: int, updated_post: post, db: Session = Depends(get_db)):
+def updatepost(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
     # Query to find the post by ID
     post_query = db.query(models.post).filter(models.post.id == id)
     post = post_query.first() 
@@ -161,15 +148,15 @@ def updatepost(id: int, updated_post: post, db: Session = Depends(get_db)):
     db.commit()
 
     # Return the updated post
-    return {"updated_post": post_query.first()}
-    print(updated_post.dict())
+    return {post_query.first()}
+    #print(updated_post.dict())
 
 
 
 
-@app.get('/sqlalchemy')
-def testposts(db: Session = Depends(get_db)):
+# @app.get('/sqlalchemy')
+# def testposts(db: Session = Depends(get_db)):
     
      
-    posts = db.query(models.Post).all()
-    return{"data" : posts}
+#     posts = db.query(models.Post).all()
+#     return{"data" : posts}
