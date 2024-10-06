@@ -1,7 +1,7 @@
+from typing import Optional, List
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from pydantic import BaseModel, Field
-from typing import Optional
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -57,7 +57,7 @@ async def root():
    return {"message": "welcome"}
 
 
-@app.get("/posts")
+@app.get("/posts", response_model=List[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute("""Select * from Post""")
     # posts = cursor.fetchall()
@@ -83,7 +83,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     
     
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=schemas.Post)
 def get_post(id : int, db: Session = Depends(get_db)):
     
     
@@ -133,7 +133,7 @@ def deleteposts(id:int, db: Session = Depends(get_db)):
     
     
     
-@app.put("/posts/{id}")
+@app.put("/posts/{id}", response_model=schemas.Post)
 def updatepost(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
     # Query to find the post by ID
     post_query = db.query(models.post).filter(models.post.id == id)
@@ -148,7 +148,7 @@ def updatepost(id: int, updated_post: schemas.PostCreate, db: Session = Depends(
     db.commit()
 
     # Return the updated post
-    return {post_query.first()}
+    return post
     #print(updated_post.dict())
 
 
