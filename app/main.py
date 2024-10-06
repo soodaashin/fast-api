@@ -78,7 +78,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     
     db.refresh(new_post)
     
-    #return new_post
+    return new_post
 
     
     
