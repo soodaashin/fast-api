@@ -16,8 +16,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
-
-
 while True:
     
     try:
@@ -160,3 +158,16 @@ def updatepost(id: int, updated_post: schemas.PostCreate, db: Session = Depends(
      
 #     posts = db.query(models.Post).all()
 #     return{"data" : posts}
+
+
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+  
+    new_user =  models.User(**user.dict())
+
+    db.add(new_user) 
+    db.commit()
+    
+    db.refresh(new_user)
+    
+    return new_user
