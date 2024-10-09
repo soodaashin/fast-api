@@ -6,13 +6,11 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-from . import models, schemas
+from . import models, schemas, utils
 from sqlalchemy.orm import Session
 from .database import engine, SessionLocal, get_db
-from passlib.context import CryptContext
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")   
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -168,7 +166,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     #hass password
     
-    hashed_password = pwd_context.hash(user.password)
+    hashed_password = utils.hash(user.password)
     user.password = hashed_password
   
     new_user =  models.User(**user.dict())
@@ -177,5 +175,16 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     
     db.refresh(new_user)
-    
+
     return new_user
+
+
+
+@app.get('/users/{id}')
+def get_user(id : int, db: Session = Depends(get_db)):
+        user = db.query(models.User).filter(models.User.id == id).first()
+        
+        if not user:
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=f"user with {id} does not exist")
+        return user
+        
