@@ -5,10 +5,13 @@ from ..database import engine, SessionLocal, get_db
 from typing import Optional, List
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/posts",
+    tags=["Post"]
+)
 
 
-@router.get("/posts", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute("""Select * from Post""")
     # posts = cursor.fetchall()
@@ -18,7 +21,7 @@ def get_posts(db: Session = Depends(get_db)):
     
     return posts
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
         
     new_post =  models.post(**post.dict())
@@ -34,7 +37,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     
     
 
-@router.get("/posts/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.Post)
 def get_post(id : int, db: Session = Depends(get_db)):
     
     
@@ -54,7 +57,7 @@ def get_post(id : int, db: Session = Depends(get_db)):
     # return{"data" : posts}
  
  
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def deleteposts(id:int, db: Session = Depends(get_db)):
     
     

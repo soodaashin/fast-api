@@ -50,9 +50,9 @@ def find_post(id):
          
 
 app.include_router(post.router)
-
+app.include_router(user.router)
 
 @app.get("/")
 async def root():      
    return {"message": "welcome"}
-
+  
