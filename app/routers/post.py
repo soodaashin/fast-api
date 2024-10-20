@@ -12,7 +12,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db)):
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""Select * from Post""")
     # posts = cursor.fetchall()
     #print(posts)
@@ -22,10 +22,10 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
         
     
-    print(user_id)
+    print(current_user)
     
     new_post =  models.post(**post.dict())
     
@@ -41,7 +41,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id
     
 
 @router.get("/{id}", response_model=schemas.Post)
-def get_post(id : int, db: Session = Depends(get_db)):
+def get_post(id : int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     
     
     post = db.query(models.post).filter(models.post.id == id).first()
@@ -61,7 +61,7 @@ def get_post(id : int, db: Session = Depends(get_db)):
  
  
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def deleteposts(id:int, db: Session = Depends(get_db)):
+def deleteposts(id:int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     
     
     post = db.query(models.post).filter(models.post.id == id)
@@ -91,7 +91,7 @@ def deleteposts(id:int, db: Session = Depends(get_db)):
     
     
 @router.put("/posts/{id}", response_model=schemas.Post)
-def updatepost(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
+def updatepost(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # Query to find the post by ID
     post_query = db.query(models.post).filter(models.post.id == id)
     post = post_query.first() 
