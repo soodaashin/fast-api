@@ -2,7 +2,7 @@ from  .database import Base
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.sql.expression import null, text
 from sqlalchemy.sql.sqltypes import TIMESTAMP   
-
+from sqlalchemy.orm import relationship
 
 class post(Base):
     __tablename__ = "posts"
@@ -15,7 +15,7 @@ class post(Base):
     
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     
-    
+    owner = relationship("User")
     
     class Config:
         orm_mode = True
@@ -29,3 +29,7 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone = True), nullable=False, server_default=text('now()'))
+    
+    
+    
+    
