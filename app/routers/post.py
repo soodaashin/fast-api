@@ -12,12 +12,13 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit:int = 10, skip:int = 0, search:Optional[str]=""):
     # cursor.execute("""Select * from Post""")
     # posts = cursor.fetchall()
     #print(posts)
     
-    posts = db.query(models.post).filter(models.post.owner_id ==  current_user.id).all() 
+    print(limit)
+    posts = db.query(models.post).filter(models.post.title.contains(search)).limit(limit).offset(skip).all()
     
     return posts
 
@@ -44,8 +45,9 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current
 def get_post(id : int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     
     
+    
+    print(limit) 
     post = db.query(models.post).filter(models.post.id == id).first()
-     
      
      
     if post.owner_id != current_user.id:
