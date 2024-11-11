@@ -2,27 +2,11 @@ from fastapi import FastAPI
 from . import models, schemas, utils
 from .database import engine, SessionLocal
 from .routers import post, user, auth
+from .config import settings
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-
-# while True:
-    
-#     try:
-#         conn = psycopg2.connect(host='localhost', database='FastAPI', user ='postgres', password='sood', cursor_factory=RealDictCursor)
-#         cursor = conn.cursor()
-#         print("Database connection sucessfull")
-        
-#         break
-        
-#     except  Exception as error:
-#         print("connection failed")
-        
-#         print("Error", error)
-        
-#         time.sleep(3)
         
 
 app.include_router(post.router)
