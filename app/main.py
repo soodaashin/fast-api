@@ -3,7 +3,7 @@ from . import models, schemas, utils
 from .database import engine, SessionLocal
 from .routers import post, user, auth
 from .config import settings
-
+ 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
