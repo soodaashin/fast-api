@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from . import models, schemas, utils
-from .database import engine, SessionLocal
-from .routers import post, user, auth
-from .config import settings
+import app.models as models, app.schemas as schemas, app.utils as utils
+from app.database import engine, SessionLocal
+from app.routers import post, user, auth
+from app.config import settings
  
 models.Base.metadata.create_all(bind=engine)
 
