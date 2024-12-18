@@ -14,7 +14,7 @@ router = APIRouter(
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     
-    #hass password
+    #hash password
     
     hashed_password = utils.hash(user.password)
     user.password = hashed_password

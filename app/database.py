@@ -3,9 +3,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from app.config import Settings
 
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sood@localhost/FastAPI"
+SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:sood@localhost/FastAPI"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 # Dependency
